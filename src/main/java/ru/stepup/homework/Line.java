@@ -14,8 +14,8 @@ public class Line {
     }
 
     public double getLength() {
-        int dx = end.x - start.x;
-        int dy = end.y - start.y;
+        int dx = end.getX() - start.getX();
+        int dy = end.getY() - start.getY();
         return Math.sqrt(dx * dx + dy * dy);
     }
 }
