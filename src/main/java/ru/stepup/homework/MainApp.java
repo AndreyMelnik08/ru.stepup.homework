@@ -4,16 +4,15 @@ public class MainApp {
 
     public static void main(String[] args) {
 
-        Point point1 = new Point(1, 3);
-        Point point2 = new Point(1, 3);
-        Point point3 = new Point(5, 8);
-
-        System.out.println(point1);
-        System.out.println(point2);
-        System.out.println(point3);
-
-        System.out.println(point1.equals(point2));
-        System.out.println(point2.equals(point3));
-        System.out.println(point1.equals(point3));
+        Line line1 = new Line(new Point(1, 3), new Point(5, 8));
+        Line line2 = new Line(new Point(10, 11), new Point(15, 19));
+        Line line3 = new Line(line1.end, line2.start);
+        System.out.println(line3);
+        line3.start = new Point(2, 4);
+        line3.end = new Point(6, 9);
+        System.out.println(line3);
+        double totalLength = line1.getLength() + line2.getLength() + line3.getLength();
+        System.out.println("Суммарная длина всех линий: " + totalLength);
     }
+
 }

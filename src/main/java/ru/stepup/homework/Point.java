@@ -1,9 +1,8 @@
 package ru.stepup.homework;
 
 public class Point {
-
-    private int x;
-    private int y;
+    int x;
+    int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -12,9 +11,6 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Point{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "{X:" + x + "; Y:" + y + "}";
     }
 }
