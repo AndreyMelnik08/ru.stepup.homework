@@ -5,8 +5,8 @@ public class Fraction {
     private int numerator;
     private int denominator;
 
-    public Fraction(int numerator, int denominator) {
-        if (denominator == 0) {
+    public Fraction(int numerator, int denominator) throws IllegalArgumentException {
+        if (denominator < 0) {
             throw new IllegalArgumentException("Знаменатель не может быть отрицательным числом");
         }
         this.numerator = numerator;
