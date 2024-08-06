@@ -26,7 +26,11 @@ public class Department {
     public Department(String name, Position position, Employee manager) {
         this.name = name;
         this.position = position;
-        this.manager = manager;
+        if (name.equals(manager.getDepartment().getName())) {
+            this.manager = manager;
+        } else {
+            System.out.println("Руководитель является начальником другого отдела");
+        }
     }
 }
 

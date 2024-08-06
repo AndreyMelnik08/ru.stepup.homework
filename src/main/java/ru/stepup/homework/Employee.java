@@ -9,6 +9,10 @@ public class Employee {
         return name;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
+
     public Employee(String name, Department department) {
         this.name = name;
         this.department = department;
