@@ -1,11 +1,18 @@
 package ru.stepup.homework;
 
-
-public class PolyLine {
+public class PolyLine implements Measurable {
 
     private Point[] points;
 
     public PolyLine(Point... points) {
+        this.points = points;
+    }
+
+    public Point[] getPoints() {
+        return points;
+    }
+
+    public void setPoints(Point[] points) {
         this.points = points;
     }
 
@@ -16,6 +23,7 @@ public class PolyLine {
         System.out.println();
     }
 
+    @Override
     public double getLength() {
         double length = 0;
         for (int i = 0; i < points.length - 1; i++) {
@@ -24,5 +32,4 @@ public class PolyLine {
         }
         return length;
     }
-
 }

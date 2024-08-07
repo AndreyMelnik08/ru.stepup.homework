@@ -1,6 +1,6 @@
 package ru.stepup.homework;
 
-public class Line {
+public class Line implements Measurable {
     Point start;
     Point end;
 
@@ -13,6 +13,7 @@ public class Line {
         return "Точка начала линии: " + start + ". Точка окончания: " + end;
     }
 
+    @Override
     public double getLength() {
         int dx = end.getX() - start.getX();
         int dy = end.getY() - start.getY();
