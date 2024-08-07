@@ -1,6 +1,6 @@
 package ru.stepup.homework;
 
-public class Fraction {
+public class Fraction extends Number {
 
     private int numerator;
     private int denominator;
@@ -38,5 +38,24 @@ public class Fraction {
         return minus(new Fraction(num, 1));
     }
 
+    @Override
+    public int intValue() {
+        return numerator / denominator;
+    }
+
+    @Override
+    public long longValue() {
+        return (long) numerator / denominator;
+    }
+
+    @Override
+    public float floatValue() {
+        return (float) numerator / denominator;
+    }
+
+    @Override
+    public double doubleValue() {
+        return (double) numerator / denominator;
+    }
 }
 
