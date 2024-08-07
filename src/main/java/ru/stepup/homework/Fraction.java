@@ -4,6 +4,7 @@ public class Fraction extends Number {
 
     private int numerator;
     private int denominator;
+    private double number;
 
     public Fraction(int numerator, int denominator) throws IllegalArgumentException {
         if (denominator < 0) {
@@ -11,6 +12,11 @@ public class Fraction extends Number {
         }
         this.numerator = numerator;
         this.denominator = denominator;
+    }
+
+    public Fraction(double number) {
+        this.numerator = (int) (number * 10);
+        this.denominator = 10;
     }
 
     @Override
