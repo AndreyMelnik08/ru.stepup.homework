@@ -1,4 +1,7 @@
-package ru.stepup.homework;
+package ru.сourses.geometry;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class PolyLine implements Measurable {
 
@@ -31,5 +34,18 @@ public class PolyLine implements Measurable {
             length += line.getLength();
         }
         return length;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PolyLine polyLine = (PolyLine) o;
+        return Objects.deepEquals(points, polyLine.points);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(points);
     }
 }
