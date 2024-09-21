@@ -1,44 +1,65 @@
 package ru.stepup.homework;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class Student {
     private String name;
-    private int[] grades;
+    private List grades= new ArrayList<>();
 
-    public Student(String name, int[] grades) throws IllegalArgumentException {
-        for (int grade : grades) {
-            if (grade < 2 || grade > 5) {
-                throw new IllegalArgumentException("Все оценки должны быть в диапазоне от 2 до 5");
-            }
-        }
+    public Student(String name) {
         this.name = name;
-        this.grades = grades;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
 
-    public int[] getGrades() {
-        return grades;
+    public List getGrades() {
+        return Collections.unmodifiableList(grades);
     }
 
     public void addGrade(int grade) {
-        if (grade >= 2 && grade <= 5) {
-            int[] newGrades = new int[grades.length + 1];
-            for (int i = 0; i < grades.length; i++) {
-                newGrades[i] = grades[i];
-            }
-            newGrades[grades.length] = grade;
-            grades = newGrades;
-        } else {
-            System.out.println("Все оценки должны быть в диапазоне от 2 до 5");
+        if (grade < 2 || grade > 5) {
+            throw new IllegalArgumentException(grade + " is wrong grade");
         }
+        grades.add(grade);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.name);
+        hash = 13 * hash + Objects.hashCode(this.grades);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Student other = (Student) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return Objects.equals(this.grades, other.grades);
     }
 
     @Override
     public String toString() {
-        return name + ", оценки: " + Arrays.toString(grades);
+        return "Student{" + "name=" + name + ", marks=" + grades + '}';
     }
 }
