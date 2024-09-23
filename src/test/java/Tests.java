@@ -1,5 +1,7 @@
+import org.junit.jupiter.api.Assertions;
 import org.testng.annotations.Test;
 import ru.stepup.homework.Student;
+import ru.stepup.homework.StudentRepositoryMock;
 
 import java.util.List;
 
@@ -10,7 +12,8 @@ import static org.testng.AssertJUnit.assertTrue;
 public class Tests {
     @Test
     public void testAddGrade() {
-        Student student = new Student("Vasya");
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student = new Student("Vasya", studentRepositoryMock);
         student.addGrade(4);
         student.addGrade(5);
         List grades = student.getGrades();
@@ -21,7 +24,8 @@ public class Tests {
 
     @Test
     public void testAddInvalidGrade() {
-        Student student = new Student("Vasya");
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student = new Student("Vasya", studentRepositoryMock);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             student.addGrade(6);
         });
@@ -30,7 +34,8 @@ public class Tests {
 
     @Test
     public void testGetGradesImmutable() {
-        Student student = new Student("Vasya");
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student = new Student("Vasya", studentRepositoryMock);
         student.addGrade(4);
         List grades = student.getGrades(); // Проверка, что список оценок нельзя изменить
         Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
@@ -41,9 +46,10 @@ public class Tests {
 
     @Test
     public void testEqualsAndHashCode() {
-        Student student1 = new Student("Vasya");
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student1 = new Student("Vasya", studentRepositoryMock);
         student1.addGrade(3);
-        Student student2 = new Student("Vasya");
+        Student student2 = new Student("Vasya", studentRepositoryMock);
         student2.addGrade(3);
         assertEquals(student1, student2);
         assertEquals(student1.hashCode(), student2.hashCode());
@@ -51,10 +57,20 @@ public class Tests {
 
     @Test
     public void testToString() {
-        Student student = new Student("Vasya");
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student = new Student("Vasya", studentRepositoryMock);
         student.addGrade(4);
         student.addGrade(5);
         String expected = "Student{name=Vasya, marks=[4, 5]}";
         assertEquals(expected, student.toString());
     }
+
+    @Test
+    public void testRaiting() {
+        StudentRepositoryMock studentRepositoryMock = new StudentRepositoryMock();
+        Student student = new Student("Vasya", studentRepositoryMock);
+        student.addGrade(4);
+        Assertions.assertEquals(student.raiting(), 10);
+    }
+
 }

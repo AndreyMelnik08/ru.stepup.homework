@@ -1,16 +1,25 @@
 package ru.stepup.homework;
 
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@ToString
+@EqualsAndHashCode
+
 public class Student {
     private String name;
-    private List grades= new ArrayList<>();
+    private List grades = new ArrayList<>();
+    StudentRepositoryMock studentRepositoryMock;
 
-    public Student(String name) {
+    public Student(String name, StudentRepositoryMock studentRepositoryMock) {
         this.name = name;
+        this.studentRepositoryMock = studentRepositoryMock;
     }
 
     public void setName(String name) {
@@ -25,11 +34,17 @@ public class Student {
         return Collections.unmodifiableList(grades);
     }
 
+    @SneakyThrows
     public void addGrade(int grade) {
-        if (grade < 2 || grade > 5) {
+        if (!studentRepositoryMock.checkGrade(grade)) {
             throw new IllegalArgumentException(grade + " is wrong grade");
         }
         grades.add(grade);
+    }
+
+    @SneakyThrows
+    public int raiting() {
+        return studentRepositoryMock.getRatingForGradeSum(grades.stream().mapToInt(x -> (int) x).sum());
     }
 
     @Override
