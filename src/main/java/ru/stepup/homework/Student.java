@@ -3,7 +3,14 @@ package ru.stepup.homework;
 import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +44,18 @@ public class Student {
     @SneakyThrows
     public void addGrade(int grade) {
         if (!studentRepositoryMock.checkGrade(grade)) {
+            throw new IllegalArgumentException(grade + " is wrong grade");
+        }
+        grades.add(grade);
+    }
+
+    @SneakyThrows
+    public void addGradeHttpGet(int grade) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpGet request = new HttpGet("http://localhost:5352/checkGrade?grade="+grade);
+        CloseableHttpResponse httpResponse = httpClient.execute(request);
+        HttpEntity entity = httpResponse.getEntity();
+        if(!Boolean.parseBoolean(EntityUtils.toString(entity))){
             throw new IllegalArgumentException(grade + " is wrong grade");
         }
         grades.add(grade);
