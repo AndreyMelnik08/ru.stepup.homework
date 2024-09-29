@@ -1,0 +1,176 @@
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import org.testng.annotations.Test;
+
+import static org.hamcrest.Matchers.*;
+
+public class TestWebService {
+
+    @Test
+    public void addStudent() {
+        int id = 1;
+        int[] marks = new int[]{2, 4, 5};
+        String name = "Andrey";
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + id + ", \"name\":\"" + name + "\", \"marks\":" + arrayToJson(marks) + "}").
+                when().post("/student").then().
+                statusCode(201);
+    }
+
+    @Test
+    public void testGetStudent() {
+        int id = 100;
+        String name = "Fedor";
+        int[] marks = new int[]{3, 3, 3};
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"id\":" + id + ", \"name\":\"" + name + "\", \"marks\":" + arrayToJson(marks) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().
+                baseUri("http://localhost:8080/student/" + id).
+                contentType(ContentType.JSON).
+                when().get().then().
+                statusCode(200).
+                contentType(ContentType.JSON).
+                body("id", equalTo(100)).body("name", equalTo("Fedor")).body("marks", hasItems(3, 3, 3));
+    }
+
+    @Test
+    public void testGetNonExistingStudent() {
+        int nonExistingId = 999;
+        RestAssured.given().
+                baseUri("http://localhost:8080/student/" + nonExistingId).contentType(ContentType.JSON).
+                when().get().then().
+                statusCode(404);
+    }
+
+    @Test
+    public void updateStudent() {
+        int id = 10;
+        String name = "Vasya";
+        int[] marks = new int[]{2, 4, 2};
+        int[] marksUpdate = new int[]{2, 2, 1, 2};
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + id + ", \"name\":\"" + name + "\", \"marks\":" + arrayToJson(marks) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + id + ", \"name\":\"" + name + "\", \"marks\":" + arrayToJson(marksUpdate) + "}")
+                .when().post("/student").then().statusCode(201);
+    }
+
+    @Test
+    public void addStudentWithNullId() {
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"id\": null, \"name\":\" + name +\", \"marks\": []}")
+                .when().post("/student").then().statusCode(201);
+    }
+
+    @Test
+    public void addStudentWithoutName() {
+        int id = 20;
+        int[] marks = new int[]{1, 1, 1};
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + id + ", \"name\", \"marks\":" + arrayToJson(marks) + "}").
+                when().post("/student").then().
+                statusCode(400);
+    }
+
+    @Test
+    public void deleteStudent() {
+        RestAssured.given().contentType(ContentType.JSON).
+                when().delete("/student/" + 1).then().
+                statusCode(200);
+    }
+
+    @Test
+    public void deleteStudentWithNonExistingId() {
+        int nonExistingId = 888;
+        RestAssured.given().contentType(ContentType.JSON).
+                when().delete("/student/" + nonExistingId).then().
+                statusCode(404);
+    }
+
+    @Test
+    public void getTopStudentWithoutAddedStudents() {
+        RestAssured.given().contentType(ContentType.JSON)
+                .when().get("/topStudent").then().statusCode(200).body(isEmptyOrNullString());
+    }
+
+    @Test
+    public void getTopStudentWithEmptyMarks() {
+        int id = 50;
+        String name = "Anna";
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + id + ", \"name\":\"" + name + "\", \"marks\":}").
+                when().get("/topStudent").then().statusCode(200).body(isEmptyOrNullString());
+    }
+
+    @Test
+    public void getTopSingleStudentWithHighestAverage() {
+        int[] marks1 = new int[]{2, 3, 3};
+        int[] marks2 = new int[]{4, 4, 4};
+        int[] marks3 = new int[]{1, 4, 3};
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Alex" + "\", \"marks\":" + arrayToJson(marks1) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Tom" + "\", \"marks\":" + arrayToJson(marks2) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Jack" + "\", \"marks\":" + arrayToJson(marks3) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                given().when().get("/topStudent").then().
+                statusCode(200).contentType(ContentType.JSON).
+                body("name[0]", equalTo("Jack")).body("marks[0]", hasItems(4, 4, 4));
+    }
+
+    @Test
+    public void getTopAllStudentWithHighestAverage() {
+        int[] marks1 = new int[]{2, 4, 5};
+        int[] marks2 = new int[]{5, 5, 5};
+        int[] marks3 = new int[]{5, 5, 5};
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Sasha" + "\", \"marks\":" + arrayToJson(marks1) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Roma" + "\", \"marks\":" + arrayToJson(marks2) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                body("{\"Id\":" + "null" + ", \"name\":\"" + "Dima" + "\", \"marks\":" + arrayToJson(marks3) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().contentType(ContentType.JSON).
+                given().when().get("/topStudent").then().
+                statusCode(200).contentType(ContentType.JSON).
+                body("name[0]", equalTo("Roma")).body("marks[0]", hasItems(5, 5, 5)).
+                body("name[1]", equalTo("Dima")).body("marks[1]", hasItems(5, 5, 5));
+    }
+
+    private String arrayToJson(int[] array) {
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < array.length; i++) {
+            json.append(array[i]);
+            if (i < array.length - 1) {
+                json.append(",");
+            }
+        }
+        json.append("]");
+        return json.toString();
+    }
+}
+
