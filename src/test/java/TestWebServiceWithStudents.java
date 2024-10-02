@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.*;
 public class TestWebServiceWithStudents {
 
 //java -jar RestApp.jar
+//java -jar RestAppBroken.jar
 
     @Test
     public void addStudent() {
@@ -65,9 +66,21 @@ public class TestWebServiceWithStudents {
 
     @Test
     public void addStudentWithNullId() {
+        int id = 30;
+        String name = "Hary";
+        int[] marks = new int[]{};
         RestAssured.given().contentType(ContentType.JSON).
-                body("{\"id\": null, \"name\":\" + name +\", \"marks\": []}")
-                .when().post("/student").then().statusCode(201);
+                body("{\"id\":" + id + ", \"name\":\"" + name + "\", \"marks\":" + arrayToJson(marks) + "}").
+                when().post("/student").then().
+                statusCode(201);
+
+        RestAssured.given().
+                baseUri("http://localhost:8080/student/" + id).
+                contentType(ContentType.JSON).
+                when().get().then().
+                statusCode(200).
+                contentType(ContentType.JSON).
+                body("id", equalTo(id)).body("name", equalTo("Hary")).body("marks", hasItems());
     }
 
     @Test
@@ -93,11 +106,17 @@ public class TestWebServiceWithStudents {
         RestAssured.given().contentType(ContentType.JSON).
                 when().delete("/student/" + 1).then().
                 statusCode(200);
-    }
 
+        RestAssured.given().
+                baseUri("http://localhost:8080/student/" + id).
+                contentType(ContentType.JSON).
+                when().get().then().
+                statusCode(404);
+    }
+    
     @Test
     public void deleteStudentWithNonExistingId() {
-        int nonExistingId = 888;
+        int nonExistingId = 8888;
         RestAssured.given().contentType(ContentType.JSON).
                 when().delete("/student/" + nonExistingId).then().
                 statusCode(404);
