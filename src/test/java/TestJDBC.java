@@ -41,7 +41,6 @@ public class TestJDBC {
             while (rs.next()) {
                 int id = rs.getInt("ID");
                 String name = rs.getString("NAME");
-
                 if (Character.isLowerCase(name.charAt(0))) {
                     String correctedName = Character.toUpperCase(name.charAt(0)) + name.substring(1);
                     stm.executeUpdate("UPDATE Employee SET NAME = '" + correctedName + "' WHERE ID = " + id);
@@ -57,16 +56,27 @@ public class TestJDBC {
 
     @Test
     public void testCountEmployeesInITDepartment() {
-        int count = 0;
         try (Connection con = DriverManager.getConnection(DB_URL); Statement stm = con.createStatement()) {
             ResultSet rs = stm.executeQuery("SELECT COUNT(*) AS Count FROM Employee WHERE DepartmentID = 2");
             if (rs.next()) {
-                count = rs.getInt("Count");
                 assertEquals(2, rs.getInt("Count"));
             }
         } catch (SQLException e) {
             System.out.println(e);
-            System.out.println("Количество сотрудников в IT-отделе: " + count);
+        }
+    }
+
+    @Test
+    public void removeDepartment() {
+        try (Connection con = DriverManager.getConnection("jdbc:h2:C:\\Users\\Компутер\\IdeaProjects\\Office")) {
+            PreparedStatement stm = con.prepareStatement("DELETE FROM Department WHERE ID = 1");
+            stm.executeUpdate();
+            ResultSet rs = stm.executeQuery("SELECT COUNT(*) AS Count FROM Employee WHERE DepartmentID = 1");
+            if (rs.next()) {
+                assertEquals(0, rs.getInt("Count"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }
